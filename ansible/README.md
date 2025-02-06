@@ -16,6 +16,10 @@
 - Access URL
   - Web Access: [http://hostname/](http://dev.menta.me/)
 
+#  playbook run
+```sh
+$ ansible-playbook playbook.yml
+```
 # Service Status Checks
 
 - Nginx Status Check
