@@ -36,8 +36,10 @@
   /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
   -- Dump completed on 2024-10-13 11:40:18 
-```
+
+
 - process_check.sh
+
   ```sh
   # ./process_check.sh
   3
@@ -50,6 +52,6 @@
   0
   nginx is not running
   nginx is running
-
+```
 
 
