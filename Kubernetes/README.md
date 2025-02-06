@@ -21,7 +21,8 @@ Server Version: v1.30.5
 ## Directory
 
 ```
-(~/Desktop/menta/Kubernetes)$ ls -a
+(~/Desktop/Dev-Environments
+/Kubernetes)$ ls -a
 .          ..         .gitignore README.md  docker     k8s        wordpress
 
 tree docker
@@ -56,8 +57,8 @@ k8s
 - git clone or fork
 
 ```
-mkdir -p ~/Desktop/menta
-cd ~/Desktop/menta
+mkdir -p ~/Desktop/Dev-Environments
+cd ~/Desktop/Dev-Environments
 git clone git@github.com:nayataiyo/menta.git
 ```
 
@@ -97,9 +98,12 @@ define( 'NONCE_SALT',       'put your unique phrase here' );
 - check docker context
 
 ```
-(~/Desktop/menta/Kubernetes/docker/nginx)$ docker build . -t Kubernetes/nginx:v1.0.0
-(~/Desktop/menta/Kubernetes)$ docker build -t issue22/app:v1.0.0 -f docker/app/Dockerfile .
-(~/Desktop/menta/Kubernetes/docker/mysql)$ docker build . -t Kubernetes/mysql:v1.0.0
+(~/Desktop/Dev-Environments
+/Kubernetes/docker/nginx)$ docker build . -t Kubernetes/nginx:v1.0.0
+(~/Desktop/Dev-Environments
+/Kubernetes)$ docker build -t issue22/app:v1.0.0 -f docker/app/Dockerfile .
+(~/Desktop/Dev-Environments
+/Kubernetes/docker/mysql)$ docker build . -t Kubernetes/mysql:v1.0.0
 ```
 
 ## Setting Kubernetes
@@ -151,10 +155,14 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ```
 
 ```
-(~/Desktop/menta/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f secrets.yml
-(~/Desktop/menta/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f ingress.yml
-(~/Desktop/menta/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f app.yml
-(~/Desktop/menta/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f mysql.yml
+(~/Desktop/Dev-Environments
+/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f secrets.yml
+(~/Desktop/Dev-Environments
+/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f ingress.yml
+(~/Desktop/Dev-Environments
+/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f app.yml
+(~/Desktop/Dev-Environments
+/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f mysql.yml
 ```
 
 ## Check Resource
