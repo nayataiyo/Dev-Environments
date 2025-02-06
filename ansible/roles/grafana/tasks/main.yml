@@ -1,0 +1,28 @@
+- name: Set Python 2 interpreter for this role
+  set_fact:
+    ansible_python_interpreter: /usr/bin/python2
+
+- name: Check if grafana_repo exists #whenの判定で使用
+  stat:
+    path: /etc/yum.repos.d/grafana.repo
+  register: grafana_repo
+
+- name: copy grafana.repo
+  copy:
+    src: grafana.repo
+    dest: /etc/yum.repos.d/
+  when: not grafana_repo.stat.exists
+
+- name: install grafana package
+  yum:
+    name: grafana-9.5.3
+
+- name: grafana plugins install
+  shell: grafana-cli plugins install alexanderzobnin-zabbix-app
+  when: not grafana_repo.stat.exists
+
+- name: start grafana-server
+  systemd:
+    name: grafana-server
+    state: started
+    enabled: yes

@@ -1,0 +1,42 @@
+- name: Set Python 2 interpreter for this role
+  set_fact:
+    ansible_python_interpreter: /usr/bin/python2
+
+- name: create user_vars
+  set_fact:
+    user_vars: "{{ item.username }}" #user_varsにユーザ名を格納
+  loop: "{{ user_group_lists }}"
+
+- name: install zabbixrepo
+  yum: 
+    name: "{{ item }}"
+  loop:
+    - https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-latest.el7.noarch.rpm
+    - https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-agent-5.0.44-1.el7.x86_64.rpm
+
+
+- name: Set priority for zabbix-frontend repository
+  ini_file:
+    path: /etc/yum.repos.d/zabbix.repo
+    section: zabbix-frontend
+    option: priority
+    value: "1"
+
+- name: install zabbix package
+  yum: 
+    name: "{{ item }}"
+    enablerepo: zabbix-frontend
+  loop:
+    - zabbix-agent
+
+- name: start zabbix-agent
+  systemd:
+    name: zabbix-agent
+    state: started
+    enabled: yes
+
+- name: copy zabbix_agentd.conf
+  template:
+    src: "zabbix_agentd.conf"
+    dest: "/etc/zabbix/zabbix_agentd.conf" 
+  notify: restart zabbix-agent

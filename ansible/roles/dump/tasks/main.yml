@@ -1,0 +1,14 @@
+- name: Check if wordpress.sh exists #whenの判定で使用
+  stat:
+    path: /tmp/wordpress.sh 
+  register: wordpress_sh
+
+- name: Copy shell script to remote host
+  copy:
+    src: "{{ item.src }}"
+    dest: "/tmp/{{ item.dest }}"
+    mode: "0755"
+  loop:
+    - { src: files/set_db.env.sh, dest: set_db.env.sh }
+    - { src: files/wordpress.sh, dest: wordpress.sh }
+  when: not wordpress_sh.stat.exists

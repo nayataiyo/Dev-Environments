@@ -1,0 +1,41 @@
+---
+#varsファイルの読み込み
+- name: Load variables from file
+  include_vars:
+    file: vars/password.yml
+
+#NOPASSWD設定の追記
+- name: 
+  lineinfile:
+    path: /etc/sudoers
+    line: "{{ item }}"
+    state: present
+    validate: 'visudo -cf %s'
+  loop:
+    - "{{ sudoers_user }} ALL=(ALL) NOPASSWD:ALL"
+
+#新規グループの作成
+- name: create group
+  group:
+    name: "{{ item.groupname }}"
+    state: present
+  loop: "{{ user_group_lists }}"
+
+#新規ユーザの作成/アカウント情報追加
+- name: create user
+  user: 
+    name: "{{ item.username }}"
+    group: "{{ item.groupname }}"
+    password: "{{ user_password | password_hash('sha512') }}"
+    shell: /bin/bash
+    state: present
+    update_password: on_create
+  loop: "{{ user_group_lists }}"
+
+- name: Add SSh key for the user
+  authorized_key:
+    user: "{{ item.username }}"
+    state: present
+    key: "{{ ssh_key }}"
+  loop: "{{ user_group_lists }}"
+

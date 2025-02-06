@@ -1,0 +1,44 @@
+- name: install remi epel
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "{{ PHP_VERSION_EPEL }}"
+    - "{{ PHP_VERSION_REMI }}"
+
+- name: Set priority for Remi PHP 8.3 repository
+  ini_file:
+    path: /etc/yum.repos.d/remi-php83.repo
+    section: remi-php83
+    option: priority
+    value: "1"
+
+- name: php83 install
+  yum:
+    name: "{{ item }}"
+    state: present
+    enablerepo: remi,remi-php83
+  loop:
+    - php
+    - php-fpm
+    - php-gd
+    - php-mbstring
+    - php-xml
+    - php-curl
+    - php-mysqlnd
+    - php-pdo
+
+- name: start php-fpm
+  systemd:
+    name: php-fpm
+    state: started
+    enabled: yes
+
+- name: copy php-fpm www.conf
+  copy:
+    src: "{{ item.src }}"
+    dest: "/etc/php-fpm.d/{{ item.dest }}"
+    mode: "0664"
+  loop:
+    - { src: "www.conf", dest: . }
+  notify: restart php-fpm

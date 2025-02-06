@@ -1,0 +1,27 @@
+---
+
+- name: Setup zabbix server
+  hosts: zabbix
+  roles:
+    - user
+    - ssh
+    - zabbix-nginx
+    - zabbix-php
+    - zabbix-mysql
+    - cron
+    - dump
+    - zabbix-server
+    - grafana
+
+- name: Setup  Wordpress server
+  hosts: web
+  roles:
+    - user
+    - ssh
+    - nginx
+    - php
+    - mysql
+    - wordpress
+    - cron
+    - dump
+    - zabbix-agent

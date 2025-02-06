@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      initContainers:
+        - name: init
+          image: app:v1.0.0
+          command:
+            - "sh"
+            - "-c"
+            - "cp -r /var/www/dev-k8s.techbull.cloud/* /wordpress-data/"
+          volumeMounts:
+            - name: documentroot
+              mountPath: "/wordpress-data"
+      containers:
+        - name: nginx
+          image: Kubernetes/nginx:v1.0.0
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: php-socket
+              mountPath: "/var/run"
+            - name: documentroot
+              mountPath: "/var/www/dev-k8s.techbull.cloud"
+        - name: app
+          image: app:v1.0.0
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_PASSWORD
+          volumeMounts:
+            - name: php-socket
+              mountPath: "/var/run"
+
+      volumes:
+        - name: php-socket
+          emptyDir: {}
+        - name: documentroot
+          emptyDir: {}

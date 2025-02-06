@@ -1,0 +1,1 @@
+ssh_key: "{{ lookup('file', '/home/vagrant/.ssh/authorized_keys') }}" # ssh_keyにauthorized_keysの出力内容を格納

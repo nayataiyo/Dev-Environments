@@ -1,0 +1,8 @@
+- name: cron configuration
+  cron:
+    name: execution interval
+    job: /tmp/wordpress.sh
+    minute: "0"
+    hour: "4"
+    state: present
+

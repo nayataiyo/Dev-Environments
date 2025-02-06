@@ -1,0 +1,5 @@
+[nginx]
+name=nginx repo
+baseurl=https://dl.fedoraproject.org/pub/archive/epel/7/$basearch/
+gpgcheck=0
+enabled=1

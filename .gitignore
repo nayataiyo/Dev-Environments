@@ -1,0 +1,10 @@
+ansible/roles/mysql/vars/password.yml
+ansible/roles/user/vars/password.yml
+ansible/roles/wordpress/vars/password.yml
+ansible/roles/zabbix-mysql/vars/password.yml
+ansible/roles/zabbix-server/vars/password.yml
+ansible/roles/zabbix-nginx/vars/password.yml
+ansible/roles/zabbix-server/vars/password.yml
+ansible/roles/zabbix-agent/vars/password.yml
+ansible/roles/dump/files/set_db.env.sh
+.vagrant

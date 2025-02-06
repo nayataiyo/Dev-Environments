@@ -1,0 +1,10 @@
+PHP_VERSION_REMI: "https://rpms.remirepo.net/enterprise/remi-release-7.rpm"
+PHP_VERSION_EPEL: "epel-release"
+
+MYSQL_VERSION: "https://repo.mysql.com/yum/mysql-8.0-community/el/7/x86_64/mysql80-community-release-el7-3.noarch.rpm"
+
+time_stamp: "{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}"
+
+user_group_lists:  
+  - username: "menta"
+    groupname: "menta" 

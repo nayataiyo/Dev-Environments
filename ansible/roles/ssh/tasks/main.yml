@@ -1,0 +1,10 @@
+---
+#dev.menta.meにsshd_configをコピー
+- name: copy sshd_config
+  copy:
+    src: "{{ item.src }}"
+    dest: "/etc/ssh/{{ item.dest }}"
+  loop:
+    - { src: roles/ssh/files/sshd_config, dest: . }
+
+  notify: Restart SSH #sshd.serviceの再起動

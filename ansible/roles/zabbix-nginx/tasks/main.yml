@@ -1,0 +1,24 @@
+- name: copy nginx.repo
+  copy:
+    src: roles/zabbix-nginx/files/nginx.repo
+    dest: /etc/yum.repos.d/.
+
+- name: install nginx
+  yum:
+    name: nginx
+    state: installed
+
+- name: copy nginx conf
+  copy:
+    src: "{{ item.src }}"
+    dest: "/etc/nginx/{{ item.dest }}"
+  loop:
+    - { src: roles/zabbix-nginx/files/conf.d, dest: . }
+    - { src: roles/zabbix-nginx/files/nginx.conf, dest: . }
+
+- name: start nginx
+  systemd:
+    name: nginx
+    enabled: yes
+    state: started
+  notify: restart nginx

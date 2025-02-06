@@ -1,0 +1,85 @@
+- name: create user_lists
+  set_fact:
+    user_vars: "{{ item.username }}" #user_varsにユーザ名を格納
+  loop: "{{ user_group_lists }}"
+
+- name: install rpm
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "{{ MYSQL_VERSION }}"
+
+- name: add mysql gpg key
+  rpm_key:
+    state: present
+    key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+
+- name: install mysqld
+  yum:
+    name: "{{ item }}"
+    state: installed
+  loop:
+    - mysql-community-server
+    - python3
+
+- name: Install PyMySQL,cryptography using pip3
+  pip:
+    name:
+      - PyMySQL
+      - cryptography
+    executable: pip3
+
+- name: Set Python 3 interpreter for this role
+  set_fact:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: start mysqld
+  systemd:
+    name: mysqld
+    state: started
+    enabled: yes
+
+- name: copy mysqld config
+  template:
+    src: roles/mysql/templates/my.cnf
+    dest: /etc/my.cnf
+    mode: "0644"
+
+- name: Check if wordpress_db dir exists #whenの判定で使用
+  stat:
+    path: /var/lib/mysql/wordpress_db #作成するDBのディレクトリパス
+  register: wordpress_db_dir
+
+- name: Get MySQL initial root password from log
+  shell: "grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}'"
+  register: mysql_root_temp_password
+  when: not wordpress_db_dir.stat.exists
+
+- name: Change MySQL root password with escaped special characters
+  shell: >
+    mysql -u root -p'{{ mysql_root_temp_password.stdout }}' --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ user_password }}';"
+  when: not wordpress_db_dir.stat.exists
+
+- name: Create WordPress database
+  mysql_db:
+    login_user: root
+    login_password: "{{ user_password }}"
+    login_host: localhost
+    name: wordpress_db
+    state: present
+    encoding: utf8mb4
+    collation: utf8mb4_unicode_ci
+
+- name: Create WordPress database User
+  mysql_user:
+    login_user: root
+    login_password: "{{ user_password }}"
+    login_host: "localhost"
+    name: menta
+    host: "localhost"
+    password: "{{ user_password }}"
+    state: present
+    priv: "*.*:ALL,GRANT"
+  when: not wordpress_db_dir.stat.exists
+  notify: restart mysqld

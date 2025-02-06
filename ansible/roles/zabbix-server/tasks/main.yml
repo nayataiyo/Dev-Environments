@@ -1,0 +1,92 @@
+- name: Set Python 2 interpreter for this role
+  set_fact:
+    ansible_python_interpreter: /usr/bin/python2
+
+- name: create user_vars
+  set_fact:
+    user_vars: "{{ item.username }}"
+  loop: "{{ user_group_lists }}"
+
+- name: Check if zabbix_conf_pgp exists #whenの判定で使用
+  stat:
+    path: /etc/zabbix/web/zabbix.conf.php #作成するDBのディレクトリパス
+  register: zabbix_conf_php
+
+- name: install zabbixrepo
+  yum:
+    name: "{{ item }}"
+  loop:
+    - https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-latest.el7.noarch.rpm
+    - https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/frontend/zabbix-web-5.0.44-1.el7.noarch.rpm
+    - https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/frontend/zabbix-web-japanese-5.0.44-1.el7.noarch.rpm
+
+- name: Set priority for zabbix-frontend repository
+  ini_file:
+    path: /etc/yum.repos.d/zabbix.repo
+    section: zabbix-frontend
+    option: priority
+    value: "1"
+
+- name: install zabbix package
+  yum:
+    name: "{{ item }}"
+    enablerepo: zabbix-frontend
+  loop:
+    - zabbix-server-mysql
+    - zabbix-agent
+    - zabbix-web
+    - zabbix-web-japanese
+    - pip
+
+- name: import create.sql.gz
+  shell: >
+    zcat /usr/share/doc/zabbix-server-mysql-5.0.45/create.sql.gz |  mysql -u {{ user_vars }} -p{{ user_password }} zabbix5
+  when: not zabbix_conf_php.stat.exists
+
+- name: copy zabbix.server.conf
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: "zabbix_server.conf", dest: "/etc/zabbix/zabbix_server.conf" }
+    - { src: "zabbix.conf.php", dest: "/etc/zabbix/web/zabbix.conf.php" }
+
+- name: Set Python 3 interpreter for this role
+  set_fact:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: install zabbix-api
+  pip:
+    name: zabbix-api
+    state: present
+    executable: pip3
+
+- name: add zabbix-agent
+  zabbix_host:
+    server_url: "http://zabbix02/api_jsonrpc.php" #zabbixコンソールのリンク
+    login_user: Admin #ログイン時のユーザ名
+    login_password: zabbix #ログイン時のパスワード
+    host_name: "dev.menta.me" #監視対象のホスト名
+    visible_name: "Monitor WordPress server" #zabbixコンソール上での表示名
+    host_groups:
+      - "Linux servers" #追加するグループ名
+    link_templates: #追加するテンプレート
+      - "Template App Nginx by Zabbix agent"
+      - "Template DB MySQL by Zabbix agent"
+      - "Template OS Linux by Zabbix agent"
+    interfaces:
+      - type: 1 # 1: Zabbixエージェント
+        main: 1 # メインインターフェース (1: Yes)
+        useip: 1 # IPアドレスで接続 (1: Yes)
+        ip: "192.168.56.15" # 監視対象ホストのIPアドレス
+        dns: "0"
+        port: "10050" # Zabbixエージェントのデフォルトポート
+    state: present #デフォルトの設定
+    status: enabled #デフォルトの設定
+
+- name: start zabbix-server
+  systemd:
+    name: zabbix-server
+    state: started
+    enabled: yes
+  notify: restart zabbix-server
