@@ -1,5 +1,5 @@
 - ## wordpressを作成しよう!
-- 
+  
 ![wordpress-logo-stacked-rgb.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3904736/642ed24d-0c8b-f664-5049-896b3789c1c9.png)
 
 - ### mentaユーザ作成する（リモートマシン）
