@@ -152,14 +152,10 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ```
 
 ```
-(~/Desktop/Dev-Environments
-/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f secrets.yml
-(~/Desktop/Dev-Environments
-/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f ingress.yml
-(~/Desktop/Dev-Environments
-/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f app.yml
-(~/Desktop/Dev-Environments
-/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f mysql.yml
+(~/Desktop/Dev-Environments/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f secrets.yml
+(~/Desktop/Dev-Environments/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f ingress.yml
+(~/Desktop/Dev-Environments/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f app.yml
+(~/Desktop/Dev-Environments/Kubernetes/k8s)$ kubectl -n dev-techbull-k8s apply -f mysql.yml
 ```
 
 ## Check Resource
