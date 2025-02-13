@@ -98,12 +98,9 @@ define( 'NONCE_SALT',       'put your unique phrase here' );
 - check docker context
 
 ```
-(~/Desktop/Dev-Environments
-/Kubernetes/docker/nginx)$ docker build . -t Kubernetes/nginx:v1.0.0
-(~/Desktop/Dev-Environments
-/Kubernetes)$ docker build -t issue22/app:v1.0.0 -f docker/app/Dockerfile .
-(~/Desktop/Dev-Environments
-/Kubernetes/docker/mysql)$ docker build . -t Kubernetes/mysql:v1.0.0
+(~/Desktop/Dev-Environments/Kubernetes/docker/nginx)$ docker build . -t Kubernetes/nginx:v1.0.0
+(~/Desktop/Dev-Environments/Kubernetes)$ docker build -t app:v1.0.0 -f docker/app/Dockerfile .
+(~/Desktop/Dev-Environments/Kubernetes/docker/mysql)$ docker build . -t Kubernetes/mysql:v1.0.0
 ```
 
 ## Setting Kubernetes
